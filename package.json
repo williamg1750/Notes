@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/williamg1750/Notes#readme",
   "dependencies": {
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "franc": "^5.0.0",
     "langs": "^2.0.0"
