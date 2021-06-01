@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
+const methodOverride = require('method-override');
 //an npm packaget hat give unique ids
 //copied from the npm docs as is
 //const { v4: uuidv4 } = require('uuid');
@@ -13,12 +14,13 @@ const { v4: uuid } = require('uuid');
 //this basically is a middelware taht parses thru reqbody as urlencoded data other wise it would be undefined
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 //this basically sets the absoulte path
 app.set('views', path.join(__dirname, 'views'));
 //need to use inorder to use EJS
 app.set('view engine', 'ejs');
 
-const comments = [
+let comments = [
   {
     id: uuid(),
     username: 'william',
@@ -61,15 +63,28 @@ app.get('/comments/:id', (req, res) => {
   res.render('comments/show', { comment });
 });
 
+app.get('/comments/:id/edit', (req, res) => {
+  const { id } = req.params;
+  const comment = comments.find((current) => current.id === id);
+  res.render('comments/edit', { comment });
+});
+
 app.patch('/comments/:id', (req, res) => {
-  // const { id } = req.params;
-  // const comment = comments.find((current) => current.id === id);
-  // res.render('comments/show', { comment });
-  res.send('IM THE PATCH');
+  const { id } = req.params;
+  const foundComment = comments.find((current) => current.id === id);
+  const newComment = req.body.comment;
+  foundComment.comment = newComment;
+  res.redirect('/comments');
+});
+
+app.delete('/comments/:id', (req, res) => {
+  const { id } = req.params;
+  comments = comments.filter((current) => current.id !== id);
+  res.redirect('/comments');
 });
 
 app.get('/tacos', (req, res) => {
-  res.send('get/ tacos response');
+  res.send('get/ tacos response!!!');
 });
 
 app.post('/tacos', (req, res) => {
